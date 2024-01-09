@@ -15,7 +15,7 @@ def invocation_logger(logger):
             start_time = time.time()
             result = func(*args, **kwargs)
             end_time = time.time()
-            print(f'Время выполнения {func.__name__}: {end_time - start_time} секунд')
+            print(f'Время выполнения {func.__name__}: {end_time - start_time:.9f} секунд')
             return result
         return function_wrapper
     return function_decorator
