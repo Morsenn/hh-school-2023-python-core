@@ -7,8 +7,8 @@ from hw.invocation_logger import invocation_logger
 class Market:
     @invocation_logger(lambda name: print(f'Вызвана функция {name} в {datetime.now()}'))
     def __init__(self, wines: list = None, beers: list = None) -> None:
-        self.wines = sorted(Market.check_list(wines), key=lambda drink: drink.title)
-        self.beers = sorted(Market.check_list(beers), key=lambda drink: drink.title)
+        self.wines = sorted(wines or [], key=lambda drink: drink.title or 'NoName')
+        self.beers = sorted(beers or [], key=lambda drink: drink.title or 'NoName')
         self.drink_titles = set(drink.title for drink in chain(self.wines, self.beers))
 
     @invocation_logger(lambda name: print(f'Вызвана функция {name} в {datetime.now()}'))
@@ -27,7 +27,7 @@ class Market:
 
         :return: list
         """
-        return sorted(chain(self.beers, self.wines), key=lambda drink: drink.title)
+        return sorted(chain(self.beers, self.wines), key=lambda drink: drink.title or 'NoName')
 
     @invocation_logger(lambda name: print(f'Вызвана функция {name} в {datetime.now()}'))
     def get_drinks_by_production_date(self, from_date=None, to_date=None) -> list:
@@ -37,10 +37,8 @@ class Market:
         :return: list
         """
         return list(filter(
-            lambda drink: (from_date is None or from_date <= drink.production_date) and
+            lambda drink: drink.production_date is not None and
+                          (from_date is None or from_date <= drink.production_date) and
                           (to_date is None or drink.production_date <= to_date),
             chain(self.beers, self.wines)))
 
-    @staticmethod
-    def check_list(arg: list):
-        return [] if arg is None else arg
